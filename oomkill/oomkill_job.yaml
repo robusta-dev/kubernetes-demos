@@ -3,7 +3,7 @@ kind: Job
 metadata:
   name: oom-kill-job3
 spec:
-  ttlSecondsAfterFinished: 100
+  ttlSecondsAfterFinished: 3600
   backoffLimit: 0
   template:
     spec:
