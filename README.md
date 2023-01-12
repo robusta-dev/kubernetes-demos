@@ -1,6 +1,6 @@
 Here are YAMLs to practice Kubernetes troubleshooting. Each example contains a different error or troubleshooting scenario.
 
-These files can be used to evaluate [Robusta.dev](https://home.robusta.dev/) and other Kubernetes observability platforms.
+These files can be used to evaluate [Robusta.dev](https://home.robusta.dev/) and other observability platforms.
 
 # Crashing Pod Demo
 
