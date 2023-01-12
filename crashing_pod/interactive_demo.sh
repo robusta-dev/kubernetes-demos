@@ -1,7 +1,9 @@
 #!/bin/sh
-kubectl apply -f ./crashpodv1.yaml 
-read -p "Press enter to change Deployment..."
-kubectl apply -f ./crashpodv2_broken.yaml
+echo "Deploying a healthy Deployment"
+kubectl apply -f ./healthy.yaml 
+
+read -p "Press enter to break the Deployment..."
+kubectl apply -f ./broken.yaml
 
 echo "\nWaiting 60 seconds"
 sleep 60
