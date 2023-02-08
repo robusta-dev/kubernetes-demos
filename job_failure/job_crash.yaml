@@ -11,7 +11,7 @@ spec:
         command: 
         - "python"
         - "-c"
-        - "import time, sys; time.sleep(2); print('\\n'.join([f'error, going to exit at 100: current counter={i}' for i in range(101)])); print('exiting!'); sys.exit(2)"
+        - "import time, sys; time.sleep(120); print('\\n'.join([f'error, going to exit at 100: current counter={i}' for i in range(101)])); print('exiting!'); sys.exit(2)"
       restartPolicy: Never
   backoffLimit: 4
 
