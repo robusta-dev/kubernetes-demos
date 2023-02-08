@@ -1,0 +1,17 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: bad-job
+spec:
+  template:
+    spec:
+      containers:
+      - name: bad-python
+        image: python:3.9
+        command: 
+        - "python"
+        - "-c"
+        - "import time, sys; time.sleep(2); print('\\n'.join([f'error, going to exit at 100: current counter={i}' for i in range(101)])); print('exiting!'); sys.exit(2)"
+      restartPolicy: Never
+  backoffLimit: 4
+
