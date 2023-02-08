@@ -1,98 +1,64 @@
-Here are YAMLs to practice Kubernetes troubleshooting. Each example contains a different error or troubleshooting scenario.
+# Introduction 
+Practice Kubernetes troubleshooting with example scenarios.
 
-These files can be used to evaluate [Robusta.dev](https://home.robusta.dev/) and other observability platforms.
+Evaluate observability platforms, like [Robusta.dev](https://home.robusta.dev/), by testing them out on realistic Kubernetes errors.
 
-# Crashing Pod Demo
+# Usage
+Run various `kubectl apply` commands. To cleanup, run `kubectl delete` on the same.
 
-## Running it
+# Scenarios
 
-1. Run `cd ./crash_pod_demo && ./crashpod_demo.sh && cd ..`
-2. Press enter to deliberately break the `crashpod` deployment and make it crash
-3. Check your Slack channel for a notication about the crashing pod. The message includes the pod's logs!
-4. Click the "Investigate button" to open Robusta's UI
-5. Click on the last change event and see exactly what broke the pod
+## Pod Issues
 
-## Value Demonstrated
+### Crashing Pod (CrashLoopBackoff)
 
-1. You can get Slack notifications about issues in your cluster 
-2. Notifications contain the exact data you need to diagnose the issue
-3. You see more troubleshooting data in the Robusta UI, including recent changes to Kubernetes objects
+```
+kubectl apply -f https://raw.githubusercontent.com/robusta-dev/kubernetes-demos/main/crashpod/broken.yaml
+```
 
-# OOM Kill (Out of Memory Kill) Demo
+### OOMKilled Pod (Out of Memory Kill)
 
-## Running it
+```
+kubectl apply -f https://raw.githubusercontent.com/robusta-dev/kubernetes-demos/main/oomkill/oomkill_job.yaml
+```
 
-1. Run `kubectl apply -f ./oomkill/oomkill_job.yaml`
-2. Check your Slack channel for a notification about the Kubernetes pod which got OOMKilled. The message includes details you need to debug the out of memory error.
-3. Clean up the demo with `kubectl delete -f ./oomkill/oomkill_demo.yaml`
+### High CPU Throttling (CPUThrottlingHigh)
 
-## Value Demonstrated
+Apply the following YAML and wait **15 minutes**. (CPU throttling is only an issue if it occurs for a meangingful periods of time. Less than 15 minutes of throttling typically does not trigger an alert.)
 
-Robusta shows relevant data for each alert. In this specific case, Robusta shows relevant memory graphs for OOM Kills.
+```
+kubectl apply -f https://raw.githubusercontent.com/robusta-dev/kubernetes-demos/main/cpu_throttling/throttling.yaml
+```
 
-This lets you fix issues faster with more confidence.
+### Pending Pod
 
-# CPU Throttling Demo (CPUThrottlingHigh alert)
+Apply the following YAML and wait **15 minutes**. (By default, most systems only alert after pods are pending for 15 minutes. This prevents false alarms on autoscaled clusters, where its OK for pods to be temporarily pending.)
 
-## Running it
+```
+kubectl apply -f https://raw.githubusercontent.com/robusta-dev/kubernetes-demos/main/pending_pods/pending_pod.yaml
+```
 
-1. Run `kubectl apply -f ./cpu_throttling/`
-2. Wait 15 minutes and then check your Slack channel for a notification about CPU throttling. The message includes a **dynamic** explanation about why it occurred and how to fix it.
-3. Clean up the demo with `kubectl delete -f ./cpu_throttling`
+### ImagePullBackOff
 
-**Note: To avoid noisy alerts about temporary and minor throttling, Robusta only alerts after CPU throttling occurs for at least 15 minutes.**
+```
+kubectl apply -f https://raw.githubusercontent.com/robusta-dev/kubernetes-demos/main/image_pull_backoff/no_such_image.yaml
+```
 
-## Value Demonstrated
+## Change Tracking
 
-Robusta automatically investigates common Kubernetes issues and tells you why they occur.
+Deploy a healthy pod. Then break it.
 
-Note: Robusta's explanations are **dynamic** and depend on the real reason an issue is occurring! If you had CPU throttling on a pod without CPU limits then you would have received **different** advice as the situation is different.
+```
+kubectl apply -f https://raw.githubusercontent.com/robusta-dev/kubernetes-demos/main/crashpod/healthy.yaml
+kubectl apply -f https://raw.githubusercontent.com/robusta-dev/kubernetes-demos/main/crashpod/broken.yaml
+```
 
-# Debugging Pending Pods
+Now audit your cluster. If someone else made this change, would you be able to pinpoint the change that broke the application?
 
-## Running it
+## Drift and Namespace Comparison
 
-1. Run `kubectl apply -f pending_pods` 
-2. Wait 15 minutes and then check your Slack channel for a notification about the pending pod. The message includes Kubernetes events which tell you *why* the pod can't be scheduled to any of the existing nodes
-3. Clean up the demo by running `kubectl delete -f pending_pods`
+```
+kubectl apply -f https://raw.githubusercontent.com/robusta-dev/kubernetes-demos/main/namespace_drift/example.yaml
+```
 
-**Note: By default, Robusta only alerts after a pod is pending for 15 minutes.** In a busy Kubernetes cluster with autoscaling, it's normal and OK if pods are pending for short periods of time while clusters scale up!
-
-## Value Demonstrated
-
-Robusta tells you *why* pods are pending. E.g. if a pod is pending because there isn't enough CPU in the cluster, Robusta will tell you so! If the issue is not enough memory thenRobusta will tell you that instead. This works by pulling in the relevant Kubernetes events automatically, just like you would see in `kubectl get events` if you filtered for the relevant pods.
-
-# ImagePullBackOff
-
-## Running it
-
-1. Run `kubectl apply -f image_pull_backoff`
-2. Look at your Slack channel or the Robusta UI for a message about the ImagePullBackoff
-3. Clean up the demo by running `kubectl delete -f image_pull_backoff`
-
-## Value Demonstrated
-
-Robusta identifies ImagePullBackoffs and also helps you differentiate between the different reasons (e.g. wrong image vs nonexistent tag)
-
-# Namespace Comparison
-
-## Running it
-
-1. Run `kubectl apply -f namespace_comparison_demo` 
-2. Open the Robusta UI and wait about 60 seconds for the new services to appear
-2. In the Robusta UI click on the "Comparison" page
-3. Perform a comparison between the `compare1` and `compare2` namespaces
-4. Clean up the demo by running `kubectl delete -f namespace_comparison_demo`
-
-## Value Demonstrated
-
-You can identify drift between multiple clusters or namespaces.
-
-This is useful for two scenarios:
-
-1. When you are running multiple copies of an application. You can map out which versions are running and where.
-2. When a bug occurs in one environment but not another. You can see exactly how those environments differ.
-
-# Other
-More examples coming soon. Please open a GitHub issue if you have ideas!
-
+Can you quickly tell the difference between the `compare1` and `compare2` namespaces? What is the drift between them?
