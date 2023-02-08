@@ -44,7 +44,20 @@ kubectl apply -f https://raw.githubusercontent.com/robusta-dev/kubernetes-demos/
 kubectl apply -f https://raw.githubusercontent.com/robusta-dev/kubernetes-demos/main/image_pull_backoff/no_such_image.yaml
 ```
 
-## Change Tracking
+## Job Issues
+
+### Failing Job
+
+Deploy a failing job. The job will fail after 2 minutes, then attempt to run again. It will attempt 5 times before failing for good after 10 minutes total.
+
+```
+kubectl apply -f https://raw.githubusercontent.com/robusta-dev/kubernetes-demos/main/job_failure/job_crash.yaml
+```
+
+
+## Other Demos
+
+### Change Tracking
 
 Deploy a healthy pod. Then break it.
 
@@ -55,7 +68,7 @@ kubectl apply -f https://raw.githubusercontent.com/robusta-dev/kubernetes-demos/
 
 Now audit your cluster. If someone else made this change, would you be able to pinpoint the change that broke the application?
 
-## Drift and Namespace Comparison
+### Drift and Namespace Comparison
 
 ```
 kubectl apply -f https://raw.githubusercontent.com/robusta-dev/kubernetes-demos/main/namespace_drift/example.yaml
