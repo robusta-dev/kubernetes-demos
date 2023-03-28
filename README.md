@@ -48,7 +48,7 @@ kubectl apply -f https://raw.githubusercontent.com/robusta-dev/kubernetes-demos/
 
 ### Failing Job
 
-Deploy a failing job. The job will fail after 2 minutes, then attempt to run again. It will attempt 5 times before failing for good after 10 minutes total.
+Deploy a failing job. The job will fail after 60 seconds, then attempt to run again. After two attempts, it will fail for good.
 
 ```
 kubectl apply -f https://raw.githubusercontent.com/robusta-dev/kubernetes-demos/main/job_failure/job_crash.yaml
