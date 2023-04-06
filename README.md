@@ -78,7 +78,7 @@ Can you quickly tell the difference between the `compare1` and `compare2` namesp
 
 ## High overhead of GKE Nodes
 
-GKE reserves an unreasonably large amount of CPU for nodes themselves. Users pay for this CPU but it is unavailable to applications.
+On GKE, nodes can reserve more than 50% of CPU for themselves. Users pay for CPU that is unavailable to applications.
 
 To see this for yourself:
 1. Create a default GKE cluster with autopilot disabled. Don't change any other settings.
