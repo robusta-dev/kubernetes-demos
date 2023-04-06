@@ -75,3 +75,19 @@ kubectl apply -f https://raw.githubusercontent.com/robusta-dev/kubernetes-demos/
 ```
 
 Can you quickly tell the difference between the `compare1` and `compare2` namespaces? What is the drift between them?
+
+## High overhead of GKE Nodes
+
+GKE reserves an unreasonably large amount of CPU for nodes themselves. Users pay for this CPU but it is unavailable to applications.
+
+To see this for yourself:
+1. Create a default GKE cluster with autopilot disabled. Don't change any other settings.
+2. Deploy the following pod:
+
+```
+kubectl apply -f https://raw.githubusercontent.com/robusta-dev/kubernetes-demos/main/gke_node_allocatable/gke_issue.yaml
+```
+
+3. Run `kubectl get pods -o wide gke-node-allocatable-issue`
+
+The pod is Pending. A Pod requesting 1 CPU cannot run on an empty node with 2 CPUs!
