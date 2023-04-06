@@ -1,0 +1,12 @@
+# demonstrate that a pod requesting 1 CPU cannot run on the default GKE 2CPU nodes (e2-medium)
+apiVersion: v1
+kind: Pod
+metadata:
+  name: gke-node-allocatable-issue
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+    resources:
+      requests:
+        cpu: "1"
