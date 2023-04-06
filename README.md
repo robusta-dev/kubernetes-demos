@@ -91,4 +91,4 @@ kubectl apply -f https://raw.githubusercontent.com/robusta-dev/kubernetes-demos/
 
 3. Run `kubectl get pods -o wide gke-node-allocatable-issue`
 
-The pod is Pending. A Pod requesting 1 CPU cannot run on an empty node with 2 CPUs!
+The pod will be Pending. **A Pod requesting 1 CPU cannot run on an empty node with 2 CPUs!**
