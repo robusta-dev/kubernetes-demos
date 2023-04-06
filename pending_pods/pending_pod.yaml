@@ -6,7 +6,6 @@ spec:
   containers:
   - name: nginx
     image: nginx
-    imagePullPolicy: IfNotPresent
   nodeSelector:
     label: someLabel
 
