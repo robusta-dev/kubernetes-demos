@@ -5,7 +5,7 @@ Evaluate observability platforms, like [Robusta.dev](https://home.robusta.dev/),
 
 # Usage
 Run various `kubectl apply` commands. To cleanup, run `kubectl delete` on the same.
-
+[label](blob:https%3A//twitter.com/90ebc1bd-acd5-4413-99ff-211efd1be12e)
 # Scenarios
 
 ## Pod Issues
@@ -15,12 +15,20 @@ Run various `kubectl apply` commands. To cleanup, run `kubectl delete` on the sa
 ```
 kubectl apply -f https://raw.githubusercontent.com/robusta-dev/kubernetes-demos/main/crashpod/broken.yaml
 ```
+<details>
+<summary>Example: </summary>
+<img src="./example_images/crashingpod.png">
+</details>
 
 ### OOMKilled Pod (Out of Memory Kill)
 
 ```
 kubectl apply -f https://raw.githubusercontent.com/robusta-dev/kubernetes-demos/main/oomkill/oomkill_job.yaml
 ```
+<details>
+<summary>Example: </summary>
+<img src="./example_images/oomkillpod.png">
+</details>
 
 ### High CPU Throttling (CPUThrottlingHigh)
 
@@ -29,6 +37,10 @@ Apply the following YAML and wait **15 minutes**. (CPU throttling is only an iss
 ```
 kubectl apply -f https://raw.githubusercontent.com/robusta-dev/kubernetes-demos/main/cpu_throttling/throttling.yaml
 ```
+<details>
+<summary>Example: </summary>
+<img src="./example_images/highcputhrottling.png">
+</details>
 
 ### Pending Pod
 
@@ -37,12 +49,21 @@ Apply the following YAML and wait **15 minutes**. (By default, most systems only
 ```
 kubectl apply -f https://raw.githubusercontent.com/robusta-dev/kubernetes-demos/main/pending_pods/pending_pod.yaml
 ```
+<details>
+<summary>Example: </summary>
+<img src="./example_images/pendingpod.png">
+</details>
 
 ### ImagePullBackOff
 
 ```
 kubectl apply -f https://raw.githubusercontent.com/robusta-dev/kubernetes-demos/main/image_pull_backoff/no_such_image.yaml
 ```
+<details>
+<summary>Example: </summary>
+<img src="./example_images/imagepullbackoff.png">
+</details>
+
 
 ## Job Issues
 
@@ -53,6 +74,10 @@ Deploy a failing job. The job will fail after 60 seconds, then attempt to run ag
 ```
 kubectl apply -f https://raw.githubusercontent.com/robusta-dev/kubernetes-demos/main/job_failure/job_crash.yaml
 ```
+<details>
+<summary>Example: </summary>
+<img src="./example_images/failingjobs.png">
+</details>
 
 
 ## Other Demos
@@ -68,6 +93,11 @@ kubectl apply -f https://raw.githubusercontent.com/robusta-dev/kubernetes-demos/
 
 Now audit your cluster. If someone else made this change, would you be able to pinpoint the change that broke the application?
 
+<details>
+<summary>Example: </summary>
+<img src="./example_images/changetracking.png">
+</details>
+
 ### Drift and Namespace Comparison
 
 ```
@@ -75,6 +105,11 @@ kubectl apply -f https://raw.githubusercontent.com/robusta-dev/kubernetes-demos/
 ```
 
 Can you quickly tell the difference between the `compare1` and `compare2` namespaces? What is the drift between them?
+
+<details>
+<summary>Example: </summary>
+<img src="./example_images/driftandnamespace.png">
+</details>
 
 ## High overhead of GKE Nodes
 
@@ -92,3 +127,8 @@ kubectl apply -f https://raw.githubusercontent.com/robusta-dev/kubernetes-demos/
 3. Run `kubectl get pods -o wide gke-node-allocatable-issue`
 
 The pod will be Pending. **A Pod requesting 1 CPU cannot run on an empty node with 2 CPUs!**
+
+<details>
+<summary>Example: </summary>
+<img src="./example_images/highoverhead.png">
+</details>
