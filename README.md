@@ -5,7 +5,7 @@ Evaluate observability platforms, like [Robusta.dev](https://home.robusta.dev/),
 
 # Usage
 Run various `kubectl apply` commands. To cleanup, run `kubectl delete` on the same.
-[label](blob:https%3A//twitter.com/90ebc1bd-acd5-4413-99ff-211efd1be12e)
+
 # Scenarios
 
 ## Pod Issues
