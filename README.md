@@ -64,6 +64,16 @@ kubectl apply -f https://raw.githubusercontent.com/robusta-dev/kubernetes-demos/
 <img src="./example_images/imagepullbackoff.png">
 </details>
 
+### Liveness Probe
+Apply the following YAML to simulate a Liveness probe fail.
+
+```
+kubectl apply -f https://raw.githubusercontent.com/robusta-dev/kubernetes-demos/main/liveness_probe_fail/failing_liveness_probe.yaml
+```
+<details>
+<summary>Example: </summary>
+<img src="./example_images/failedlivenessprobe.png">
+</details>
 
 ## Job Issues
 
