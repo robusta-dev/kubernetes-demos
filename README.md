@@ -1,8 +1,7 @@
 # Introduction 
 Practice Kubernetes troubleshooting with realistic error scenarios.
 
-# Usage
-Run various `kubectl apply` commands. To cleanup, run `kubectl delete` on the same.
+Each scenario is run with `kubectl apply` commands. To cleanup, run `kubectl delete` on the same.
 
 # Scenarios
 
