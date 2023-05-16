@@ -1,7 +1,5 @@
 # Introduction 
-Practice Kubernetes troubleshooting with example scenarios.
-
-Evaluate observability platforms, like [Robusta.dev](https://home.robusta.dev/), by testing them out on realistic Kubernetes errors.
+Practice Kubernetes troubleshooting with realistic error scenarios.
 
 # Usage
 Run various `kubectl apply` commands. To cleanup, run `kubectl delete` on the same.
