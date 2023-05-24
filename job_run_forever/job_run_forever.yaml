@@ -1,0 +1,18 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: test-run-forever-job
+spec:
+  suspend: false
+  parallelism: 1
+  completions: 5
+  template:
+    spec:
+      containers:
+      - name: run-forever
+        image: bash
+        command: ["/bin/sh"]
+        args: ["-c", "wget -O - https://gist.githubusercontent.com/odyssomay/1078370/raw/35c5981f8c139bc9dc02186f187ebee61f5b9eb9/gistfile1.txt
+              2>/dev/null; while true; do sleep 10;done; fi"]
+      restartPolicy: Never
+  backoffLimit: 4
