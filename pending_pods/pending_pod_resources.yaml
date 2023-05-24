@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pending-pod-resources
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pending-pod-resources
+  template:
+    metadata:
+      labels:
+        app: pending-pod-resources
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        imagePullPolicy: IfNotPresent
+        resources:
+          requests:
+            nvidia.com/gpu: 5
+            cpu: 3
+            memory: 5Gi
+          limits:
+            nvidia.com/gpu: 5
+            cpu: 3
+            memory: 5Gi
