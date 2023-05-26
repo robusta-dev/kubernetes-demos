@@ -44,7 +44,7 @@ kubectl apply -f https://raw.githubusercontent.com/robusta-dev/kubernetes-demos/
 Apply the following YAML and wait **15 minutes**. (By default, most systems only alert after pods are pending for 15 minutes. This prevents false alarms on autoscaled clusters, where its OK for pods to be temporarily pending.)
 
 ```
-kubectl apply -f https://raw.githubusercontent.com/robusta-dev/kubernetes-demos/main/pending_pods/pending_pod.yaml
+kubectl apply -f https://raw.githubusercontent.com/robusta-dev/kubernetes-demos/main/pending_pods/pending_pod_node_selector.yaml
 ```
 <details>
 <summary>Example: </summary>
