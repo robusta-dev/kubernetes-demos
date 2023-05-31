@@ -139,3 +139,40 @@ The pod will be Pending. **A Pod requesting 1 CPU cannot run on an empty node wi
 <summary>Example: </summary>
 <img src="./example_images/highoverhead.png">
 </details>
+
+
+### Helm Monitoring
+
+**Prerequisites**
+
+- To set up Helm monitoring, please follow the instructions provided in the [Helm Releases Monitoring](https://docs.robusta.dev/master/playbook-reference/triggers/helm-releases-monitoring.html) documentation page.
+
+Add robusta's helm chart repository:
+```shell
+helm repo add robusta https://robusta-charts.storage.googleapis.com && helm repo update
+```
+
+Deploy a failing release:
+```shell
+helm install kubewatch robusta/kubewatch --set='rbac.create=true,updateStrategy.type=Error' --namespace demo-namespace --create-namespace
+```
+
+Deploy a successful release:
+```shell
+helm upgrade kubewatch robusta/kubewatch --set='rbac.create=true' --namespace demo-namespace --create-namespace
+```
+
+Uninstall kubewatch:
+```shell
+helm del kubewatch  --namespace demo-namespace 
+```
+
+Delete the test namespace:
+```shell
+kubectl delete namespace demo-namespace 
+```
+
+<details>
+<summary>Example: </summary>
+<img src="./example_images/helm_monitoring_kubewatch.png">
+</details>
