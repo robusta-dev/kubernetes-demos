@@ -1,0 +1,11 @@
+.idea/
+.vscode/
+*.egg/
+*.egg-info/
+*.pyc
+venv/
+docs/_build
+.DS_Store
+*.env
+.run
+dist/**/*
