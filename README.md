@@ -143,30 +143,22 @@ The pod will be Pending. **A Pod requesting 1 CPU cannot run on an empty node wi
 
 ### Helm Monitoring
 
-Add the `prometheus-community` repo
-
-```shell
-helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-helm repo update
-```
-
 Deploy a failing release:
 ```shell
-helm install jiralert prometheus-community/jiralert -f https://raw.githubusercontent.com/robusta-dev/kubernetes-demos/main/helm_monitoring/jiralert_bad_values.yaml
+helm install kubewatch robusta/kubewatch --set='rbac.create=true,updateStrategy.type=Error' --namespace demo-namespace --create-namespace
 ```
 
 Deploy a successful release:
 ```shell
-helm upgrade jiralert prometheus-community/jiralert -f https://raw.githubusercontent.com/robusta-dev/kubernetes-demos/main/helm_monitoring/jiralert_good_values.yaml
+helm upgrade kubewatch robusta/kubewatch --set='rbac.create=true' --namespace demo-namespace --create-namespace
 ```
 
-Uninstall jiralert:
+Uninstall kubewatch:
 ```shell
-helm del jiralert
+helm del kubewatch  --namespace demo-namespace 
 ```
-
 
 <details>
 <summary>Example: </summary>
-<img src="./example_images/helm_monitoring_jiralert.png">
+<img src="./example_images/helm_monitoring_kubewatch.png">
 </details>
