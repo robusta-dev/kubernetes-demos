@@ -143,6 +143,11 @@ The pod will be Pending. **A Pod requesting 1 CPU cannot run on an empty node wi
 
 ### Helm Monitoring
 
+**Prerequisites**
+
+- To set up Helm monitoring, please follow the instructions provided in the [Helm Releases Monitoring](https://docs.robusta.dev/master/playbook-reference/triggers/helm-releases-monitoring.html) documentation page.
+
+
 Deploy a failing release:
 ```shell
 helm install kubewatch robusta/kubewatch --set='rbac.create=true,updateStrategy.type=Error' --namespace demo-namespace --create-namespace
