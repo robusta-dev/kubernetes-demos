@@ -141,6 +141,22 @@ Now audit your cluster. If someone else made this change, would you be able to p
 <img src="./example_images/changetracking.png">
 </details>
 
+### Deployment Image Change Tracking
+
+Create an nginx Deployment. Then change the image tag to simulate a misconfigured image.
+
+```
+kubectl apply -f https://raw.githubusercontent.com/robusta-dev/kubernetes-demos/deployment_image_change/before_image_change.yaml
+kubectl apply -f https://raw.githubusercontent.com/robusta-dev/kubernetes-demos/deployment_image_change/after_image_change.yaml
+
+Did you immediately get notified about a change in the image tag? Why did you get another notification about a Deployment fail?
+
+<details>
+<summary>Example: </summary>
+<img src="./example_images/changetracking.png">
+</details>
+
+
 ### Drift and Namespace Comparison
 
 ```

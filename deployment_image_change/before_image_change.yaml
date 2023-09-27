@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: production-nginx
+  labels:
+    app: customer-data-api
+    environment: production
+  annotations:
+    description: "API service for managing customer data"
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: customer-data-api
+  template:
+    metadata:
+      labels:
+        app: customer-data-api
+    spec:
+      containers:
+      - name: api-container
+        image: nginx:1.14.2
