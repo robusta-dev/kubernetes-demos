@@ -129,7 +129,7 @@ An example of broken Helm release, using Robusta's [Helm Releases Monitoring](ht
 
 Deploy a healthy pod. Then break it.
 
-```
+```shell
 kubectl apply -f https://raw.githubusercontent.com/robusta-dev/kubernetes-demos/main/crashpod/healthy.yaml
 kubectl apply -f https://raw.githubusercontent.com/robusta-dev/kubernetes-demos/main/crashpod/broken.yaml
 ```
@@ -143,23 +143,23 @@ Now audit your cluster. If someone else made this change, would you be able to p
 
 ### Deployment Image Change Tracking
 
-Create an nginx Deployment. Then change the image tag to simulate a misconfigured image.
+Create an nginx deployment. Then change the image tag to simulate an unexpected image tag change.
 
-```
+```shell
 kubectl apply -f https://raw.githubusercontent.com/robusta-dev/kubernetes-demos/deployment_image_change/before_image_change.yaml
 kubectl apply -f https://raw.githubusercontent.com/robusta-dev/kubernetes-demos/deployment_image_change/after_image_change.yaml
-
-Did you immediately get notified about a change in the image tag? Why did you get another notification about a Deployment fail?
+```
+Did you immediately get notified about a change in the image tag?
 
 <details>
 <summary>Example: </summary>
-<img src="./example_images/changetracking.png">
+<img src="./example_images/deployment-image-change.png">
 </details>
 
 
 ### Drift and Namespace Comparison
 
-```
+```shell
 kubectl apply -f https://raw.githubusercontent.com/robusta-dev/kubernetes-demos/main/namespace_drift/example.yaml
 ```
 
