@@ -149,7 +149,7 @@ Create an nginx deployment. Then change the image tag to simulate an unexpected 
 kubectl apply -f https://raw.githubusercontent.com/robusta-dev/kubernetes-demos/deployment_image_change/before_image_change.yaml
 kubectl apply -f https://raw.githubusercontent.com/robusta-dev/kubernetes-demos/deployment_image_change/after_image_change.yaml
 ```
-Did you immediately get notified about a change in the image tag?
+Did you immediately get notified about a change in the image tag? Note: You will need to configure a playbook for this to work. Instructions coming soon!
 
 <details>
 <summary>Example: </summary>
