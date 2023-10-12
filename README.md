@@ -146,8 +146,8 @@ Now audit your cluster. If someone else made this change, would you be able to p
 Create an nginx deployment. Then change the image tag to simulate an unexpected image tag change.
 
 ```shell
-kubectl apply -f https://raw.githubusercontent.com/robusta-dev/kubernetes-demos/deployment_image_change/before_image_change.yaml
-kubectl apply -f https://raw.githubusercontent.com/robusta-dev/kubernetes-demos/deployment_image_change/after_image_change.yaml
+kubectl apply -f https://raw.githubusercontent.com/robusta-dev/kubernetes-demos/main/deployment_image_change/before_image_change.yaml
+kubectl apply -f https://raw.githubusercontent.com/robusta-dev/kubernetes-demos/main/deployment_image_change/after_image_change.yaml
 ```
 Did you immediately get notified about a change in the image tag? Note: You will need to configure a playbook for this to work. Instructions coming soon!
 
@@ -161,8 +161,8 @@ Did you immediately get notified about a change in the image tag? Note: You will
 Create an ingress. Then changes its port and path to simulate an unexpected ingress modification.
 
 ```shell
-kubectl apply -f https://raw.githubusercontent.com/robusta-dev/kubernetes-demos/ingress_port_path_change/before_port_path_change.yaml
-kubectl apply -f https://raw.githubusercontent.com/robusta-dev/kubernetes-demos/ingress_port_path_change/after_port_path_change.yaml
+kubectl apply -f https://raw.githubusercontent.com/robusta-dev/kubernetes-demos/main/ingress_port_path_change/before_port_path_change.yaml
+kubectl apply -f https://raw.githubusercontent.com/robusta-dev/kubernetes-demos/main/ingress_port_path_change/after_port_path_change.yaml
 ```
 Did you immediately get notified about a change in the port number and path? Note: You will need to configure a playbook for this to work. Instructions coming soon!
 
