@@ -156,7 +156,7 @@ Did you immediately get notified about a change in the image tag? Note: You will
 <img src="./example_images/deployment-image-change.png">
 </details>
 
-### Ingress Port and Path Tracking
+### Ingress Port and Path Change Tracking
 
 Create an ingress. Then changes its port and path to simulate an unexpected ingress modification.
 
