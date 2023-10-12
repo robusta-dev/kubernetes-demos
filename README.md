@@ -156,6 +156,20 @@ Did you immediately get notified about a change in the image tag? Note: You will
 <img src="./example_images/deployment-image-change.png">
 </details>
 
+### Ingress Port and Path Tracking
+
+Create an ingress. Then changes its port and path to simulate an unexpected ingress modification.
+
+```shell
+kubectl apply -f https://raw.githubusercontent.com/robusta-dev/kubernetes-demos/ingress_port_path_change/before_port_path_change.yaml
+kubectl apply -f https://raw.githubusercontent.com/robusta-dev/kubernetes-demos/ingress_port_path_change/after_port_path_change.yaml
+```
+Did you immediately get notified about a change in the port number and path? Note: You will need to configure a playbook for this to work. Instructions coming soon!
+
+<details>
+<summary>Example: </summary>
+<img src="./example_images/ingress-image-change.png">
+</details>
 
 ### Drift and Namespace Comparison
 
