@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: oom-kill-job3
+  name: oom-kill-job
 spec:
   ttlSecondsAfterFinished: 3600
   backoffLimit: 0
@@ -9,11 +9,11 @@ spec:
     spec:
       containers:
       - args:
-        - 75Mi
+        - 40Mi
         - "0"
-        - 30Mi
-        - "80"
-        - "1"
+        - 80Mi
+        - "400"
+        - "2"
         image: us-central1-docker.pkg.dev/genuine-flight-317411/devel/memory-eater:1.0
         imagePullPolicy: Always
         name: memory-eater
@@ -23,3 +23,5 @@ spec:
           requests:
             memory: 100Mi
       restartPolicy: Never
+      nodeSelector:
+        kubernetes.io/arch: amd64
