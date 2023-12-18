@@ -33,6 +33,7 @@ To get notifications like below, install [Robusta](https://github.com/robusta-de
 <summary>High CPU Throttling (CPUThrottlingHigh)</summary>
 
 Apply the following YAML and wait **15 minutes**. (CPU throttling is only an issue if it occurs for a meaningful period of time. Less than 15 minutes of throttling typically does not trigger an alert.)
+
 ```
 kubectl apply -f https://raw.githubusercontent.com/robusta-dev/kubernetes-demos/main/cpu_throttling/throttling.yaml
 ```
@@ -86,6 +87,7 @@ To get notifications like below, install [Robusta](https://github.com/robusta-de
 <details>
 <summary>Job Failure</summary>
 The job will fail after 60 seconds, then attempt to run again. After two attempts, it will fail for good.
+
 ```
 kubectl apply -f https://raw.githubusercontent.com/robusta-dev/kubernetes-demos/main/job_failure/job_crash.yaml
 ```
