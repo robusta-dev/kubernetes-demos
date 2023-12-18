@@ -7,6 +7,7 @@ Each scenario is run with `kubectl apply` commands. To cleanup, run `kubectl del
 
 <details>
 <summary>Crashing Pod (CrashLoopBackoff)</summary>
+
 ```
 kubectl apply -f https://raw.githubusercontent.com/robusta-dev/kubernetes-demos/main/crashpod/broken.yaml
 ```
@@ -18,6 +19,7 @@ To get notifications like below, install [Robusta](https://github.com/robusta-de
 
 <details>
 <summary>OOMKilled Pod (Out of Memory Kill)</summary>
+
 ```
 kubectl apply -f https://raw.githubusercontent.com/robusta-dev/kubernetes-demos/main/oomkill/oomkill_job.yaml
 ```
@@ -29,6 +31,7 @@ To get notifications like below, install [Robusta](https://github.com/robusta-de
 
 <details>
 <summary>High CPU Throttling (CPUThrottlingHigh)</summary>
+
 Apply the following YAML and wait **15 minutes**. (CPU throttling is only an issue if it occurs for a meaningful period of time. Less than 15 minutes of throttling typically does not trigger an alert.)
 ```
 kubectl apply -f https://raw.githubusercontent.com/robusta-dev/kubernetes-demos/main/cpu_throttling/throttling.yaml
@@ -41,6 +44,7 @@ To get notifications like below, install [Robusta](https://github.com/robusta-de
 
 <details>
 <summary>Pending Pod (Unschedulable due to Node Selectors)</summary>
+
 Apply the following YAML and wait **15 minutes**. (By default, most systems only alert after pods are pending for 15 minutes. This prevents false alarms on autoscaled clusters, where it's OK for pods to be temporarily pending.)
 
 ```
@@ -52,8 +56,10 @@ To get notifications like below, install [Robusta](https://github.com/robusta-de
 </details>
 
 
+
 <details>
 <summary>ImagePullBackOff</summary>
+
 ```
 kubectl apply -f https://raw.githubusercontent.com/robusta-dev/kubernetes-demos/main/image_pull_backoff/no_such_image.yaml 
 ```
@@ -63,8 +69,10 @@ To get notifications like below, install [Robusta](https://github.com/robusta-de
 </details>
 
 
+
 <details>
 <summary>Liveness Probe Failure</summary>
+
 ```
 kubectl apply -f https://raw.githubusercontent.com/robusta-dev/kubernetes-demos/main/liveness_probe_fail/failing_liveness_probe.yaml
 ```
@@ -72,6 +80,7 @@ kubectl apply -f https://raw.githubusercontent.com/robusta-dev/kubernetes-demos/
 To get notifications like below, install [Robusta](https://github.com/robusta-dev/robusta):
 <img width="500" src="./example_images/failedlivenessprobe.png">
 </details>
+
 
 
 <details>
@@ -84,6 +93,7 @@ kubectl apply -f https://raw.githubusercontent.com/robusta-dev/kubernetes-demos/
 To get notifications like below, install [Robusta](https://github.com/robusta-dev/robusta):
 <img width="500" src="./example_images/failingjobs.png">
 </details>
+
 
 
 <details>
@@ -129,8 +139,11 @@ To get notifications like below, install [Robusta](https://github.com/robusta-de
 <img width="500" src="./example_images/changetracking.png">
 </details>
 
+
+
 <details>
 <summary>Get Notified on New Deployments</summary>
+
 Create an nginx deployment. Then change the image tag to simulate an unexpected image tag change.
 
 ```shell
@@ -144,8 +157,10 @@ To get notifications like below, install [Robusta](https://github.com/robusta-de
 </details>
 
 
+
 <details>
 <summary>Track Ingress Changes</summary>
+
 Create an ingress. Then changes its port and path to simulate an unexpected ingress modification.
 
 ```shell
@@ -159,8 +174,10 @@ To get notifications like below, install [Robusta](https://github.com/robusta-de
 </details>
 
 
+
 <details>
 <summary>Drift Detection and Namespace Diff</summary>
+
 Deploy two variants of the same application in different namespaces:
 
 ```shell
@@ -176,8 +193,10 @@ To do so with Robusta, install [Robusta](https://github.com/robusta-dev/robusta)
 </details>
 
 
+
 <details>
 <summary>Inefficient GKE Nodes</summary>
+
 On GKE, nodes can reserve more than 50% of CPU for themselves. Users pay for CPU that is unavailable to applications.
 
 Reproduction:
