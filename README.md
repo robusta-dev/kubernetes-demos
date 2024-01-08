@@ -82,6 +82,14 @@ To get notifications like below, install [Robusta](https://github.com/robusta-de
 <img width="500" src="./example_images/failedlivenessprobe.png">
 </details>
 
+<details>
+<summary>Readiness Probe Failure</summary>
+
+```
+kubectl apply -f https://raw.githubusercontent.com/robusta-dev/kubernetes-demos/main/readiness_probe_fail/failing_readiness_probe.yaml
+```
+
+</details>
 
 
 <details>
