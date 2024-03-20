@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: crashpod
+  name: payment-processing-worker
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: crashpod
+      app: payment-processing-worker
   template:
     metadata:
       labels:
-        app: crashpod
+        app: payment-processing-worker
     spec:
       containers:
-      - name: crashpod
+      - name: payment-processing-container
         image: bash
         env:
         - name: DEPLOY_ENV

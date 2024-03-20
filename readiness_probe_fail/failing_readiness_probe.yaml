@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: failing-readiness-pod
+  name: search-engine-service
 spec:
   containers:
-  - name: my-container
+  - name: get-details
     image: busybox
     command: ["sh", "-c", "while true; do echo 'Running...'; sleep 5; done"]
     readinessProbe:

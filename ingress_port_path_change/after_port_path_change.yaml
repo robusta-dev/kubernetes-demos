@@ -1,11 +1,11 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: staging-ingress
+  name: frontend-ingress
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
-  ingressClassName: robusta-demo-example
+  ingressClassName: frontend-ingress-update
   rules:
   - http:
       paths:
@@ -13,6 +13,6 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: ingress-demo
+            name: ingress-frontend
             port:
               number: 8080

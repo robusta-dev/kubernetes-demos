@@ -4,4 +4,4 @@ metadata:
   name: high-priority
 value: 1000000
 globalDefault: false
-description: "This priority class should be used for XYZ service pods only."
+description: "Use for critical service pods requiring prioritized scheduling."

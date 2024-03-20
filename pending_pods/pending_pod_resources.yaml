@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: pending-pod-resources
+  name: user-profile-resources
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: pending-pod-resources
+      app: user-profile-resources
   template:
     metadata:
       labels:
-        app: pending-pod-resources
+        app: user-profile-resources
     spec:
       containers:
-      - name: nginx
+      - name: profile-getter
         image: nginx
         imagePullPolicy: IfNotPresent
         resources:

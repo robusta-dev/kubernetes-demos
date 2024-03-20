@@ -10,4 +10,4 @@ sleep 60
 echo "Done waiting. Check your Slack channel and the Robusta UI"
 
 read -p "Press enter to cleanup..."
-kubectl delete deployment crashpod
+kubectl delete deployment payment-processing-worker

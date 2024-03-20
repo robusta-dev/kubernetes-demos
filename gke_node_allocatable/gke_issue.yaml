@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: gke-node-allocatable-issue
+  name: resource-optimization-tool
 spec:
   containers:
   - name: nginx

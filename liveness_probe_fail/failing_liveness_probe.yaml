@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: failing-liveness-pod
+  name: order-processor
 spec:
   containers:
   - name: my-container

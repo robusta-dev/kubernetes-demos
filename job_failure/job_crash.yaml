@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: test-job
+  name: java-api-checker
 spec:
   template:
     spec:
