@@ -1,15 +1,15 @@
 kind: Namespace
 apiVersion: v1
 metadata:
-  name: marketing-portal
+  name: compare1
   labels:
-    scope: marketing
+    name: compare1
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: content-delivery-app
-  namespace: marketing-portal
+  name: product-catalog-app
+  namespace: compare1
   labels:
     app: web-content
     function: delivery
@@ -32,15 +32,15 @@ spec:
 kind: Namespace
 apiVersion: v1
 metadata:
-  name: sales-portal
+  name: compare2
   labels:
-    scope: sales
+    name: compare2
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: product-catalog-app
-  namespace: sales-portal
+  namespace: compare2
   labels:
     app: product-catalog
     function: listing
