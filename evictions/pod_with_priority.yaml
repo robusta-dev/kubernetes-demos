@@ -1,14 +1,13 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  creationTimestamp: null
   labels:
-    run: important
-  name: important
+    app: payment-processor
+  name: payment-processor
 spec:
   containers:
   - image: busybox:1.28
-    name: important
+    name: payment-processor-container
     resources:
       requests:
         cpu: "600m"
@@ -18,9 +17,8 @@ spec:
   dnsPolicy: ClusterFirst
   restartPolicy: Always
   tolerations:
-  - key: "key1"
+  - key: "workload-type"
     operator: "Equal"
-    value: "value1"
+    value: "critical"
     effect: "NoSchedule"
   priorityClassName: high-priority
-status: {}

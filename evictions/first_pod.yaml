@@ -1,14 +1,13 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  creationTimestamp: null
   labels:
-    run: testpod
-  name: testpod
+    app: analytics-worker
+  name: analytics-worker
 spec:
   containers:
   - image: busybox:1.28
-    name: testpod
+    name: analytics-worker-container
     resources:
       requests:
         cpu: "600m"
@@ -18,8 +17,7 @@ spec:
   dnsPolicy: ClusterFirst
   restartPolicy: Always
   tolerations:
-  - key: "key1"
+  - key: "workload-type"
     operator: "Equal"
-    value: "value1"
+    value: "analytics"
     effect: "NoSchedule"
-status: {}

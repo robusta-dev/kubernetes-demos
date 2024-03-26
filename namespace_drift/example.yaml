@@ -8,23 +8,23 @@ metadata:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nginx-deployment
+  name: product-catalog-app
   namespace: compare1
   labels:
-    mylabel: hello1
-    otherlabel: same-hello
+    app: web-content
+    function: delivery
 spec:
   selector:
     matchLabels:
-      app: nginx
-  replicas: 1 # tells deployment to run 1 pods matching the template
+      app: web-content
+  replicas: 1
   template:
     metadata:
       labels:
-        app: nginx
+        app: web-content
     spec:
       containers:
-      - name: nginx
+      - name: content-server
         image: nginx:1.14.2
         ports:
         - containerPort: 80
@@ -39,23 +39,23 @@ metadata:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nginx-deployment
+  name: product-catalog-app
   namespace: compare2
   labels:
-    mylabel: hello2
-    otherlabel: same-hello
+    app: product-catalog
+    function: listing
 spec:
   selector:
     matchLabels:
-      app: nginx
-  replicas: 1 # tells deployment to run 1 pods matching the template
+      app: product-catalog
+  replicas: 1
   template:
     metadata:
       labels:
-        app: nginx
+        app: product-catalog
     spec:
       containers:
-      - name: nginx
+      - name: catalog-server
         image: nginx:1.13.0
         ports:
         - containerPort: 80

@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: oom-kill-job
+  name: analytics-exporter
 spec:
   ttlSecondsAfterFinished: 3600
   backoffLimit: 0

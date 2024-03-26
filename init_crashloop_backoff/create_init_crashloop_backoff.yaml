@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: init-demo2
+  name: logging-agent
 spec:
   containers:
-  - name: nginx
+  - name: exporter
     image: nginx
     ports:
     - containerPort: 80
@@ -13,7 +13,7 @@ spec:
       mountPath: /usr/share/nginx/html
   # These containers are run during pod initialization
   initContainers:
-  - name: install
+  - name: downloader
     image: busybox:1.28
     command:
     - wge
