@@ -152,9 +152,9 @@ To get notifications like below, install [Robusta](https://github.com/robusta-de
 
 
 <details>
-<summary>Get Notified on New Deployments</summary>
+<summary>Track Deployment Changes</summary>
 
-Create an nginx deployment. Then change the image tag to simulate an unexpected image tag change.
+Create an nginx deployment. Then simulate multiple unexpected changes to this deployment.
 
 ```shell
 kubectl apply -f https://raw.githubusercontent.com/robusta-dev/kubernetes-demos/main/deployment_image_change/before_image_change.yaml
@@ -171,7 +171,7 @@ To get notifications like below, install [Robusta](https://github.com/robusta-de
 <details>
 <summary>Track Ingress Changes</summary>
 
-Create an ingress. Then changes its port and path to simulate an unexpected ingress modification.
+Create an ingress. Then changes its path and secretName to simulate an unexpected ingress modification.
 
 ```shell
 kubectl apply -f https://raw.githubusercontent.com/robusta-dev/kubernetes-demos/main/ingress_port_path_change/before_port_path_change.yaml

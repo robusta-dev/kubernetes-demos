@@ -1,22 +1,28 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: customer-relations-nginx
-  labels:
-    app: customer-relations-webapp
-    environment: production
-  annotations:
-    description: "API service for managing customer data"
+  name: prod-endpoint
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
-      app: customer-relations-webapp
+      app: nginx
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 2
+      maxUnavailable: 1
   template:
     metadata:
       labels:
-        app: customer-relations-webapp
+        app: nginx
     spec:
       containers:
-      - name: api-container
-        image: nginx:1.14.30
+      - name: nginx
+        image: nginx:1.21.0
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 10
+          periodSeconds: 5
