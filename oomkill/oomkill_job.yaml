@@ -9,10 +9,10 @@ spec:
     spec:
       containers:
       - args:
-        - 40Mi
+        - 100Mi
         - "0"
-        - 80Mi
-        - "400"
+        - 50Mi
+        - "80"
         - "2"
         image: us-central1-docker.pkg.dev/genuine-flight-317411/devel/memory-eater:1.0
         imagePullPolicy: Always
