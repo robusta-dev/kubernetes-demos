@@ -3,7 +3,7 @@ kind: Job
 metadata:
   name: analytics-exporter
 spec:
-  ttlSecondsAfterFinished: 3600
+  ttlSecondsAfterFinished: 36000
   backoffLimit: 0
   template:
     spec:
