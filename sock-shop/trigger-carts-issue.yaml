@@ -13,9 +13,13 @@ spec:
         args:
           - -c
           - |
-            SERVICE_IP=$(kubectl get svc -n sock-shop front-end -o jsonpath='{.spec.clusterIP}')
-            curl http://$SERVICE_IP:80/login -v -u Eve_Berger:eve -c cookie.txt
-            curl http://$SERVICE_IP:80/orders -b cookie.txt
+            # this works, but not if triggered too frequently (then the svc might not have ready endpoints so communicating with it fails?)
+            SERVICE_URL="http://front-end.sock-shop.svc.cluster.local:80"
+            echo "Logging in"
+            curl ${SERVICE_URL}/login -u Eve_Berger:eve -c cookie.txt
+            echo "Logged in"
+            curl ${SERVICE_URL}/orders -b cookie.txt || true
+            echo "Done triggering bug"
       restartPolicy: Never
       volumes:
       - name: output-volume
