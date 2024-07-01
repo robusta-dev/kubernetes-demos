@@ -1,0 +1,27 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: curl-job
+  namespace: sock-shop
+spec:
+  template:
+    spec:
+      containers:
+      - name: curl-container
+        image: curlimages/curl:latest
+        command: ["/bin/sh"]
+        args:
+          - -c
+          - |
+            # this works, but not if triggered too frequently (then the svc might not have ready endpoints so communicating with it fails?)
+            SERVICE_URL="http://front-end.sock-shop.svc.cluster.local:80"
+            echo "Logging in"
+            curl ${SERVICE_URL}/login -u Eve_Berger:eve -c cookie.txt
+            echo "Logged in"
+            curl ${SERVICE_URL}/orders -b cookie.txt || true
+            echo "Done triggering bug"
+      restartPolicy: Never
+      volumes:
+      - name: output-volume
+        emptyDir: {}
+  backoffLimit: 4
