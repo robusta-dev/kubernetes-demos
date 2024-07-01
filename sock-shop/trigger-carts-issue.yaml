@@ -1,0 +1,23 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: curl-job
+  namespace: sock-shop
+spec:
+  template:
+    spec:
+      containers:
+      - name: curl-container
+        image: curlimages/curl:latest
+        command: ["/bin/sh"]
+        args:
+          - -c
+          - |
+            SERVICE_IP=$(kubectl get svc -n sock-shop front-end -o jsonpath='{.spec.clusterIP}')
+            curl http://$SERVICE_IP:80/login -v -u Eve_Berger:eve -c cookie.txt
+            curl http://$SERVICE_IP:80/orders -b cookie.txt
+      restartPolicy: Never
+      volumes:
+      - name: output-volume
+        emptyDir: {}
+  backoffLimit: 4
