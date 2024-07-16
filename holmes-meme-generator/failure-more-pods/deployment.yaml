@@ -16,6 +16,7 @@ spec:
     spec:
       containers:
         - name: meme-app
+        # meme-generator source code available here: https://github.com/robusta-dev/Hello-DevOps-Project/tree/demo/code/meme-generator
           image: pavangudiwada/meme-generator:latest
           ports:
             - containerPort: 5000
