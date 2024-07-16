@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: meme-generator-config
+data:
+  MEME_API_URL: "https://memcom/gimme/"
+  SUBREDDITS: "Kubernetes,dockermemes,ProgrrHumor"
