@@ -20,7 +20,7 @@ spec:
           - -c
           - |
             while true; do
-              echo "Checking endpoint http://meme-service:5000...";
-              curl -s http://meme-service:5000 || echo "Failed to reach http://meme-service:5000";
+              echo "Checking endpoint http://meme-gen-service:5000...";
+              curl -s http://meme-gen-service:5000 || echo "Failed to reach http://meme-gen-service:5000";
               sleep 30;
             done;

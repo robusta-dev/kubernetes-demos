@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: analytics-exporter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: analytics-exporter
+  template:
+    metadata:
+      labels:
+        app: analytics-exporter
+    spec:
+      containers:
+      - name: memory-eater
+        image: us-central1-docker.pkg.dev/genuine-flight-317411/devel/memory-eater:1.0
+        imagePullPolicy: Always
+        args:
+        - 40Mi
+        - "0"
+        - 80Mi
+        - "400"
+        - "2"
+        resources:
+          limits:
+            memory: 100Mi
+          requests:
+            memory: 100Mi
+      restartPolicy: Always
+      nodeSelector:
+        kubernetes.io/arch: amd64
