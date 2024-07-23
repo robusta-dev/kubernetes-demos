@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: curl-deployment
+  name: curl-gen-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: curl-app
+      app: curl-gen-app
   template:
     metadata:
       labels:
-        app: curl-app
+        app: curl-gen-app
     spec:
       containers:
       - name: curl-container
