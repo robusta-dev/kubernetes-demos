@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stress-test
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: stress-test
+  template:
+    metadata:
+      labels:
+        app: stress-test
+    spec:
+      containers:
+      - name: stress-ng
+        image: polinux/stress-ng
+        command: ["stress-ng"]
+        # Adjust args to tweak memory stress levels; if pods are OOM killed immediately, consider lowering the value below 2G
+        args: ["--vm-bytes", "2G", "--vm-keep", "--vm", "4"]
+      nodeSelector:
+        kubernetes.io/hostname: ip-10-0-234-7.us-east-2.compute.internal
