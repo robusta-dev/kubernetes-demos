@@ -20,4 +20,5 @@ spec:
         ports:
         - containerPort: 80
       nodeSelector:
-        kubernetes.io/hostname: ip-10-0-234-7.us-east-2.compute.internal
+      # Specify the node where you want to induce evictions
+        kubernetes.io/hostname: your-host-name

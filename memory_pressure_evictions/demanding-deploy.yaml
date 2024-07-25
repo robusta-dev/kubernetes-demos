@@ -19,4 +19,5 @@ spec:
         # Adjust args to tweak memory stress levels; if pods are OOM killed immediately, consider lowering the value below 2G
         args: ["--vm-bytes", "2G", "--vm-keep", "--vm", "4"]
       nodeSelector:
-        kubernetes.io/hostname: ip-10-0-234-7.us-east-2.compute.internal
+      # Specify the node where you want to induce evictions
+        kubernetes.io/hostname: your-host-name
