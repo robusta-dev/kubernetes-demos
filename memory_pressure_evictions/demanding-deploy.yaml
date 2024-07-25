@@ -21,3 +21,6 @@ spec:
       nodeSelector:
       # Specify the node where you want to induce evictions
         kubernetes.io/hostname: your-host-name
+# IMPORTANT NOTE:
+# Ensure these files are deployed on nodes that do not have Robusta Runner, Robusta Forwarder, or Robusta Holmes running.
+# Otherwise, you will probably get OOMKilled events instead of eviction events.
