@@ -1,0 +1,7 @@
+Flask==1.1.4
+Werkzeug
+markupsafe==2.0.1
+prometheus-flask-instrumentator
+requests
+python-dateutil
+cryptography==39.0.1
