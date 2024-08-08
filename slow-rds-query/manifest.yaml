@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: customer-orders
+  name: customer-orders-app
 spec:
   replicas: 1
   selector:
@@ -12,9 +12,11 @@ spec:
       labels:
         app: customer-orders
     spec:
+      nodeName: ip-172-31-27-120.us-east-2.compute.internal
       containers:
       - name: fastapi-app
-        image: us-central1-docker.pkg.dev/genuine-flight-317411/devel/rds-demo:v1
+        image: us-central1-docker.pkg.dev/genuine-flight-317411/devel/rds-demo:avi-test
+        imagePullPolicy: Always
         ports:
         - containerPort: 8000
         - containerPort: 8001
@@ -50,6 +52,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: customer-orders-service
+  namespace: demo
   labels:
     app: customer-orders
 spec:
@@ -61,43 +64,3 @@ spec:
       targetPort: 8000
       name: http
   type: ClusterIP
----
-apiVersion: monitoring.coreos.com/v1
-kind: ServiceMonitor
-metadata:
-  name: customer-orders-service-monitor
-  labels:
-    release: robusta
-spec:
-  selector:
-    matchLabels:
-      app: customer-orders
-  endpoints:
-  - port: http
-    path: /metrics
-    interval: 15s
-  namespaceSelector:
-    matchNames:
-    - default
----
-apiVersion: monitoring.coreos.com/v1
-kind: PrometheusRule
-metadata:
-  name: customer-orders-alert-rules
-  labels:
-    release: robusta
-spec:
-  groups:
-  - name: customerorders.rules
-    rules:
-    - alert: HighLatencyForCustomerCheckout
-      expr: rate(http_request_duration_seconds_sum[24h]) / (rate(http_request_duration_seconds_count[24h])) > 3
-      for: 1m
-      labels:
-        severity: critical
-        deployment: customer-orders
-        namespace: default
-      annotations:
-        summary: "HTTP Requests to the '/checkout' endpoint in customer-orders-app are taking longer than 3 seconds"
-        description: "HTTP Requests to the '/checkout' endpoint in customer-orders-app are taking longer than 3 seconds"
-
