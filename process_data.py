@@ -1,6 +1,8 @@
 import logging
 import time
 
+global_i = -1
+
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -13,7 +15,10 @@ def load_modules():
     time.sleep(1)  # Simulate delay for loading modules
 
 def process_data():
-    logging.info('Processing data...')
+    global global_i
+    global_i = global_i+1
+    if global_i % 50 == 0:
+        logging.info('Processing data...')
     process_data()
 
 def main():
