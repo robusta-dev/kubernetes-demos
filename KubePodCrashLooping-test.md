@@ -1,1 +1,1 @@
-To solve KubePodCrashLooping, instead of looking at the pod, see if “robusta-runner” is running. If it’s running, it means the pod is not really crashing.
+check if robusta-runner is running - if it is running, it's not good and this is why it's failing.
