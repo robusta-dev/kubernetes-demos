@@ -32,12 +32,6 @@ const metricReader = new PrometheusExporter({
   port: parseInt(process.env.METRICS_PORT) || 9463,
 });
 
-// const myServiceMeterProvider = new MeterProvider({
-//   resource: resource,
-//   readers: [metricReader],
-// });
-// opentelemetry.metrics.setGlobalMeterProvider(myServiceMeterProvider);
-
 const traceExporter = new OTLPTraceExporter({
   url: process.env.TEMPO_URL || "http://localhost:4318/v1/traces",
   keepAlive: true,
@@ -62,7 +56,6 @@ const sdk = new NodeSDK({
   traceExporter: traceExporter,
   spanProcessor: spanProcessor,
   metricReader: metricReader,
-  // instrumentations: [getNodeAutoInstrumentations()],
 });
 
 sdk.start();
