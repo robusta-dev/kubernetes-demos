@@ -1,0 +1,22 @@
+{
+  "name": "long_logs",
+  "version": "1.0.0",
+  "description": "```bash npm install npm run dev ```",
+  "main": "dist/main.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/main.js",
+    "dev": "npm run build && node dist/main.js"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "commander": "^14.0.0",
+    "tiktoken": "^1.0.21"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.3",
+    "typescript": "^5.8.3"
+  }
+}
