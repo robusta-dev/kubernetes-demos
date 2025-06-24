@@ -1,0 +1,1 @@
+docker push us-central1-docker.pkg.dev/genuine-flight-317411/devel/long-logs:v1
