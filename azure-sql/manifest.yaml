@@ -1,0 +1,85 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: azure-sql-stress-test
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: azure-sql-credentials
+  namespace: azure-sql-stress-test
+type: Opaque
+stringData:
+  AZURE_SQL_SERVER: "your-server.database.windows.net"
+  AZURE_SQL_DATABASE: "your-database"
+  AZURE_SQL_USERNAME: "your-username"
+  AZURE_SQL_PASSWORD: "your-password"
+  AZURE_SQL_PORT: "1433"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: azure-sql-stress-test-app
+  namespace: azure-sql-stress-test
+  labels:
+    app: azure-sql-stress-test-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: azure-sql-stress-test-app
+  template:
+    metadata:
+      labels:
+        app: azure-sql-stress-test-app
+    spec:
+      containers:
+      - name: azure-sql-stress-test-app
+        image: azure-sql-stress-test:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3000
+        envFrom:
+        - secretRef:
+            name: azure-sql-credentials
+        env:
+        - name: NODE_ENV
+          value: "production"
+        - name: PORT
+          value: "3000"
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "200m"
+          limits:
+            memory: "1Gi"
+            cpu: "1000m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 3000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 3000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: azure-sql-stress-test-service
+  namespace: azure-sql-stress-test
+  labels:
+    app: azure-sql-stress-test-app
+spec:
+  type: ClusterIP
+  ports:
+  - port: 3000
+    targetPort: 3000
+    protocol: TCP
+  selector:
+    app: azure-sql-stress-test-app

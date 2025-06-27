@@ -1,0 +1,26 @@
+{
+  "name": "azure-sql-stress-test",
+  "version": "1.0.0",
+  "description": "Azure SQL stress testing application with shop simulation",
+  "main": "dist/main.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/main.js",
+    "dev": "npm run build && node dist/main.js",
+    "migrate": "node dist/migrate.js",
+    "setup-db": "npm run build && node dist/setup-db.js"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "mssql": "^11.0.1",
+    "postgrator": "^7.1.1",
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.3",
+    "@types/mssql": "^9.1.5",
+    "typescript": "^5.8.3"
+  }
+}
