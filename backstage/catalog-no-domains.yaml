@@ -1,0 +1,481 @@
+# Backstage Catalog - Components and Systems Only (No Domains)
+# This version works with default Backstage URL locations
+
+# ============================================
+# ROBUSTA MONITORING PLATFORM
+# ============================================
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: robusta-forwarder
+  title: Robusta Forwarder
+  description: Event forwarding and processing for Kubernetes monitoring
+  annotations:
+    backstage.io/kubernetes-id: robusta-forwarder
+  tags:
+    - monitoring
+    - robusta
+    - events
+spec:
+  type: service
+  lifecycle: production
+  owner: platform-team
+  system: robusta-platform
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: robusta-holmes
+  title: Robusta Holmes AI
+  description: AI-powered root cause analysis for Kubernetes issues
+  annotations:
+    backstage.io/kubernetes-id: robusta-holmes
+  tags:
+    - ai
+    - monitoring
+    - robusta
+spec:
+  type: service
+  lifecycle: production
+  owner: platform-team
+  system: robusta-platform
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: robusta-runner
+  title: Robusta Runner
+  description: Robusta automation runner for playbook execution
+  annotations:
+    backstage.io/kubernetes-id: robusta-runner
+  tags:
+    - automation
+    - robusta
+spec:
+  type: service
+  lifecycle: production
+  owner: platform-team
+  system: robusta-platform
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: robusta-aws-mcp
+  title: Robusta AWS MCP Server
+  description: AWS integration server for Robusta
+  tags:
+    - aws
+    - integration
+    - robusta
+spec:
+  type: service
+  lifecycle: production
+  owner: platform-team
+  system: robusta-platform
+
+# ============================================
+# PROMETHEUS MONITORING STACK
+# ============================================
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: prometheus
+  title: Prometheus Server
+  description: Time series database for metrics
+  annotations:
+    prometheus.io/port: "9090"
+  tags:
+    - monitoring
+    - prometheus
+    - metrics
+spec:
+  type: service
+  lifecycle: production
+  owner: platform-team
+  system: prometheus-stack
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: alertmanager
+  title: Prometheus AlertManager
+  description: Alert routing and management for Prometheus
+  tags:
+    - alerting
+    - prometheus
+spec:
+  type: service
+  lifecycle: production
+  owner: platform-team
+  system: prometheus-stack
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: grafana
+  title: Grafana Dashboards
+  description: Visualization platform for metrics
+  tags:
+    - visualization
+    - dashboards
+    - grafana
+spec:
+  type: website
+  lifecycle: production
+  owner: platform-team
+  system: prometheus-stack
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: prometheus-operator
+  title: Prometheus Operator
+  description: Kubernetes operator for managing Prometheus
+  tags:
+    - operator
+    - prometheus
+    - kubernetes
+spec:
+  type: service
+  lifecycle: production
+  owner: platform-team
+  system: prometheus-stack
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: kube-state-metrics
+  title: Kube State Metrics
+  description: Kubernetes metrics exporter
+  tags:
+    - metrics
+    - kubernetes
+spec:
+  type: service
+  lifecycle: production
+  owner: platform-team
+  system: prometheus-stack
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: node-exporter
+  title: Node Exporter
+  description: Hardware and OS metrics exporter
+  tags:
+    - metrics
+    - hardware
+spec:
+  type: service
+  lifecycle: production
+  owner: platform-team
+  system: prometheus-stack
+
+# ============================================
+# AWS CLOUDWATCH SERVICES
+# ============================================
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: cloudwatch-agent
+  title: CloudWatch Agent
+  description: AWS CloudWatch agent for metrics and logs
+  tags:
+    - aws
+    - cloudwatch
+    - monitoring
+spec:
+  type: service
+  lifecycle: production
+  owner: platform-team
+  system: aws-cloudwatch
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: cloudwatch-observability-webhook
+  title: CloudWatch Observability Webhook
+  description: Webhook service for CloudWatch Observability
+  tags:
+    - aws
+    - cloudwatch
+    - webhook
+spec:
+  type: service
+  lifecycle: production
+  owner: platform-team
+  system: aws-cloudwatch
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: dcgm-exporter
+  title: DCGM Exporter
+  description: NVIDIA GPU metrics exporter
+  tags:
+    - gpu
+    - nvidia
+    - metrics
+spec:
+  type: service
+  lifecycle: production
+  owner: platform-team
+  system: aws-cloudwatch
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: neuron-monitor
+  title: Neuron Monitor
+  description: AWS Neuron monitoring for ML workloads
+  tags:
+    - aws
+    - ml
+    - monitoring
+spec:
+  type: service
+  lifecycle: production
+  owner: platform-team
+  system: aws-cloudwatch
+
+# ============================================
+# KUBERNETES CORE SERVICES
+# ============================================
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: kube-dns
+  title: Kubernetes DNS
+  description: CoreDNS service for Kubernetes
+  tags:
+    - dns
+    - kubernetes
+    - core
+spec:
+  type: service
+  lifecycle: production
+  owner: platform-team
+  system: kubernetes-core
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: metrics-server
+  title: Metrics Server
+  description: Resource metrics API for Kubernetes
+  tags:
+    - metrics
+    - kubernetes
+    - core
+spec:
+  type: service
+  lifecycle: production
+  owner: platform-team
+  system: kubernetes-core
+
+# ============================================
+# EXTERNAL DNS
+# ============================================
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: external-dns
+  title: External DNS
+  description: Synchronize DNS records with cloud providers
+  tags:
+    - dns
+    - aws
+    - automation
+spec:
+  type: service
+  lifecycle: production
+  owner: platform-team
+  system: dns-management
+
+# ============================================
+# BACKSTAGE
+# ============================================
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: backstage-portal
+  title: Backstage Developer Portal
+  description: The developer portal you're using right now
+  tags:
+    - portal
+    - backstage
+    - frontend
+spec:
+  type: website
+  lifecycle: production
+  owner: platform-team
+  system: developer-portal
+
+# ============================================
+# APPLICATION SERVICES
+# ============================================
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: order-storage
+  title: Order Storage Service
+  description: Order management and storage service
+  tags:
+    - backend
+    - storage
+    - orders
+spec:
+  type: service
+  lifecycle: production
+  owner: backend-team
+  system: application-services
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: flask-service
+  title: Flask API Service
+  description: Python Flask API service
+  tags:
+    - api
+    - python
+    - flask
+spec:
+  type: service
+  lifecycle: production
+  owner: backend-team
+  system: application-services
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: redis-cache
+  title: Redis Cache
+  description: Redis cache for application services
+  tags:
+    - cache
+    - redis
+    - database
+spec:
+  type: database
+  owner: backend-team
+  system: application-services
+
+# ============================================
+# SYSTEMS (Service Groupings)
+# ============================================
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: robusta-platform
+  title: Robusta Monitoring Platform
+  description: Complete Kubernetes monitoring and troubleshooting platform
+  tags:
+    - monitoring
+    - ai
+    - critical
+spec:
+  owner: platform-team
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: prometheus-stack
+  title: Prometheus Monitoring Stack
+  description: Prometheus, Grafana, and AlertManager monitoring stack
+  tags:
+    - monitoring
+    - metrics
+spec:
+  owner: platform-team
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: aws-cloudwatch
+  title: AWS CloudWatch Integration
+  description: AWS CloudWatch agents and exporters
+  tags:
+    - aws
+    - monitoring
+spec:
+  owner: platform-team
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: kubernetes-core
+  title: Kubernetes Core Services
+  description: Essential Kubernetes system services
+  tags:
+    - kubernetes
+    - core
+spec:
+  owner: platform-team
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: developer-portal
+  title: Developer Portal
+  description: Backstage developer portal
+  tags:
+    - portal
+    - devex
+spec:
+  owner: platform-team
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: application-services
+  title: Application Services
+  description: Business application services
+  tags:
+    - applications
+    - backend
+spec:
+  owner: backend-team
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: dns-management
+  title: DNS Management
+  description: DNS configuration and management services
+  tags:
+    - dns
+    - infrastructure
+spec:
+  owner: platform-team
+
+# ============================================
+# TEAMS (Groups)
+# ============================================
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: platform-team
+  title: Platform Engineering Team
+  description: Responsible for infrastructure and platform services
+spec:
+  type: team
+  children: []
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: backend-team
+  title: Backend Development Team
+  description: Responsible for application services
+spec:
+  type: team
+  children: []
