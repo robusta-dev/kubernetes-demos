@@ -2,7 +2,7 @@ from flask import Flask, jsonify
 
 app = Flask(__name__)
 
-config = None
+config = {"host": "0.0.0.0", "port": 5000}
 
 host = config["host"]
 port = config["port"]
