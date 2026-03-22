@@ -11,6 +11,12 @@ import (
 	"go.uber.org/zap"
 )
 
+const (
+	// DefaultBidCacheTTL is the default time-to-live for cached bid entries.
+	// A 5-minute TTL balances freshness with cache hit rate for auction data.
+	DefaultBidCacheTTL = 300 * time.Second
+)
+
 type BidCacheHandler struct {
 	client     *redis.Client
 	logger     *zap.Logger
@@ -54,7 +60,7 @@ func (h *BidCacheHandler) GetCachedBid(ctx context.Context, auctionID string) ([
 // SetCachedBid stores a bid response in cache with the configured TTL.
 func (h *BidCacheHandler) SetCachedBid(ctx context.Context, auctionID string, data []byte) error {
 	key := fmt.Sprintf("bid:auction:%s", auctionID)
-	ttl := time.Duration(0) * time.Second // TTL for bid cache entries
+	ttl := DefaultBidCacheTTL
 
 	if err := h.client.Set(ctx, key, data, ttl).Err(); err != nil {
 		h.logger.Error("cache write failed",
