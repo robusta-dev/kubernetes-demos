@@ -1,0 +1,458 @@
+# Ticketing platform demo - deployed in a BROKEN state.
+#
+# The seat-selection service was updated and shipped with a wrong DB_HOST
+# (ticketing-db-prod, which does not resolve), so it crash-loops and customers
+# cannot pick seats or complete a purchase. The booking and payment services use
+# the correct DB_HOST (ticketing-db) and stay healthy.
+#
+# Deploy:  kubectl apply -f manifest.yaml
+# Cleanup: kubectl delete -f manifest.yaml
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ticketing
+  labels:
+    app.kubernetes.io/part-of: ticketing-platform
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: ticketing-db-credentials
+  namespace: ticketing
+  labels:
+    app.kubernetes.io/name: ticketing-db
+    app.kubernetes.io/part-of: ticketing-platform
+    app.kubernetes.io/component: database
+type: Opaque
+stringData:
+  POSTGRES_USER: ticketing
+  POSTGRES_PASSWORD: ticketing-demo-password
+  POSTGRES_DB: ticketing
+---
+# Schema + seed data, loaded by the postgres entrypoint on first start.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ticketing-db-initdb
+  namespace: ticketing
+  labels:
+    app.kubernetes.io/name: ticketing-db
+    app.kubernetes.io/part-of: ticketing-platform
+    app.kubernetes.io/component: database
+data:
+  01-schema.sql: |
+    CREATE TABLE events (
+        id          SERIAL PRIMARY KEY,
+        name        TEXT NOT NULL,
+        starts_at   TIMESTAMPTZ NOT NULL
+    );
+
+    CREATE TABLE seats (
+        id          SERIAL PRIMARY KEY,
+        event_id    INTEGER NOT NULL REFERENCES events(id),
+        row_label   TEXT NOT NULL,
+        seat_number INTEGER NOT NULL,
+        status      TEXT NOT NULL DEFAULT 'available'
+    );
+
+    CREATE TABLE bookings (
+        id          SERIAL PRIMARY KEY,
+        event_id    INTEGER NOT NULL REFERENCES events(id),
+        seat_id     INTEGER NOT NULL REFERENCES seats(id),
+        customer    TEXT NOT NULL,
+        created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+    );
+
+    CREATE TABLE payments (
+        id           SERIAL PRIMARY KEY,
+        booking_id   INTEGER NOT NULL REFERENCES bookings(id),
+        amount_cents INTEGER NOT NULL,
+        status       TEXT NOT NULL,
+        created_at   TIMESTAMPTZ NOT NULL DEFAULT now()
+    );
+
+    INSERT INTO events (name, starts_at) VALUES
+        ('Coldplay - Music of the Spheres', now() + interval '30 days'),
+        ('NBA Finals Game 7', now() + interval '7 days');
+
+    INSERT INTO seats (event_id, row_label, seat_number) VALUES
+        (1, 'A', 1), (1, 'A', 2), (1, 'A', 3),
+        (1, 'B', 1), (1, 'B', 2),
+        (2, 'A', 1), (2, 'A', 2);
+---
+# Shared, CORRECT database connection settings. seat-selection overrides DB_HOST
+# below with a bad value - that override is the bug.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ticketing-db-config
+  namespace: ticketing
+  labels:
+    app.kubernetes.io/part-of: ticketing-platform
+data:
+  DB_HOST: ticketing-db
+  DB_PORT: "5432"
+  DB_NAME: ticketing
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ticketing-db
+  namespace: ticketing
+  labels:
+    app.kubernetes.io/name: ticketing-db
+    app.kubernetes.io/instance: ticketing-db
+    app.kubernetes.io/component: database
+    app.kubernetes.io/part-of: ticketing-platform
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/version: "16"
+    tier: data
+    business-criticality: tier-1
+    team: platform
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: ticketing-db
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: ticketing-db
+        app.kubernetes.io/instance: ticketing-db
+        app.kubernetes.io/component: database
+        app.kubernetes.io/part-of: ticketing-platform
+        tier: data
+        business-criticality: tier-1
+        team: platform
+    spec:
+      containers:
+      - name: postgres
+        image: postgres:16-alpine
+        ports:
+        - containerPort: 5432
+        envFrom:
+        - secretRef:
+            name: ticketing-db-credentials
+        volumeMounts:
+        - name: initdb
+          mountPath: /docker-entrypoint-initdb.d
+        readinessProbe:
+          exec:
+            command: ["pg_isready", "-U", "ticketing", "-d", "ticketing"]
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        resources:
+          requests:
+            cpu: 50m
+            memory: 128Mi
+          limits:
+            memory: 256Mi
+      volumes:
+      - name: initdb
+        configMap:
+          name: ticketing-db-initdb
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ticketing-db
+  namespace: ticketing
+  labels:
+    app.kubernetes.io/name: ticketing-db
+    app.kubernetes.io/component: database
+    app.kubernetes.io/part-of: ticketing-platform
+spec:
+  selector:
+    app.kubernetes.io/name: ticketing-db
+  ports:
+  - protocol: TCP
+    port: 5432
+    targetPort: 5432
+---
+# booking service - healthy (uses the correct DB_HOST from ticketing-db-config)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: booking
+  namespace: ticketing
+  labels:
+    app.kubernetes.io/name: booking
+    app.kubernetes.io/instance: booking
+    app.kubernetes.io/component: api
+    app.kubernetes.io/part-of: ticketing-platform
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/version: "2.3.1"
+    tier: backend
+    business-criticality: tier-1
+    team: checkout
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: booking
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: booking
+        app.kubernetes.io/instance: booking
+        app.kubernetes.io/component: api
+        app.kubernetes.io/part-of: ticketing-platform
+        tier: backend
+        business-criticality: tier-1
+        team: checkout
+    spec:
+      containers:
+      - name: booking
+        image: us-central1-docker.pkg.dev/genuine-flight-317411/devel/ticketing-service:v1
+        ports:
+        - containerPort: 8000
+        env:
+        - name: SERVICE_NAME
+          value: booking
+        - name: DB_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: ticketing-db-config
+              key: DB_HOST
+        - name: DB_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: ticketing-db-config
+              key: DB_PORT
+        - name: DB_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: ticketing-db-config
+              key: DB_NAME
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: ticketing-db-credentials
+              key: POSTGRES_USER
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: ticketing-db-credentials
+              key: POSTGRES_PASSWORD
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        resources:
+          requests:
+            cpu: 50m
+            memory: 64Mi
+          limits:
+            memory: 128Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: booking
+  namespace: ticketing
+  labels:
+    app.kubernetes.io/name: booking
+    app.kubernetes.io/component: api
+    app.kubernetes.io/part-of: ticketing-platform
+spec:
+  selector:
+    app.kubernetes.io/name: booking
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8000
+---
+# payment service - healthy (uses the correct DB_HOST from ticketing-db-config)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment
+  namespace: ticketing
+  labels:
+    app.kubernetes.io/name: payment
+    app.kubernetes.io/instance: payment
+    app.kubernetes.io/component: api
+    app.kubernetes.io/part-of: ticketing-platform
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/version: "2.3.1"
+    tier: backend
+    business-criticality: tier-1
+    team: checkout
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: payment
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: payment
+        app.kubernetes.io/instance: payment
+        app.kubernetes.io/component: api
+        app.kubernetes.io/part-of: ticketing-platform
+        tier: backend
+        business-criticality: tier-1
+        team: checkout
+    spec:
+      containers:
+      - name: payment
+        image: us-central1-docker.pkg.dev/genuine-flight-317411/devel/ticketing-service:v1
+        ports:
+        - containerPort: 8000
+        env:
+        - name: SERVICE_NAME
+          value: payment
+        - name: DB_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: ticketing-db-config
+              key: DB_HOST
+        - name: DB_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: ticketing-db-config
+              key: DB_PORT
+        - name: DB_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: ticketing-db-config
+              key: DB_NAME
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: ticketing-db-credentials
+              key: POSTGRES_USER
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: ticketing-db-credentials
+              key: POSTGRES_PASSWORD
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        resources:
+          requests:
+            cpu: 50m
+            memory: 64Mi
+          limits:
+            memory: 128Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: payment
+  namespace: ticketing
+  labels:
+    app.kubernetes.io/name: payment
+    app.kubernetes.io/component: api
+    app.kubernetes.io/part-of: ticketing-platform
+spec:
+  selector:
+    app.kubernetes.io/name: payment
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8000
+---
+# seat-selection service - BROKEN.
+# The last deploy set DB_HOST to "ticketing-db-prod", which does not resolve, so
+# the service cannot reach the database and crash-loops. The fix is a one-line
+# change: DB_HOST should be "ticketing-db" (as the booking/payment services use).
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: seat-selection
+  namespace: ticketing
+  labels:
+    app.kubernetes.io/name: seat-selection
+    app.kubernetes.io/instance: seat-selection
+    app.kubernetes.io/component: api
+    app.kubernetes.io/part-of: ticketing-platform
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/version: "2.3.1"
+    tier: backend
+    business-criticality: tier-1
+    team: checkout
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: seat-selection
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: seat-selection
+        app.kubernetes.io/instance: seat-selection
+        app.kubernetes.io/component: api
+        app.kubernetes.io/part-of: ticketing-platform
+        tier: backend
+        business-criticality: tier-1
+        team: checkout
+    spec:
+      containers:
+      - name: seat-selection
+        image: us-central1-docker.pkg.dev/genuine-flight-317411/devel/ticketing-service:v1
+        ports:
+        - containerPort: 8000
+        env:
+        - name: SERVICE_NAME
+          value: seat-selection
+        # BUG: wrong database host shipped in the last update.
+        # Should be "ticketing-db" (see ticketing-db-config / booking & payment).
+        - name: DB_HOST
+          value: ticketing-db-prod
+        - name: DB_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: ticketing-db-config
+              key: DB_PORT
+        - name: DB_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: ticketing-db-config
+              key: DB_NAME
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: ticketing-db-credentials
+              key: POSTGRES_USER
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: ticketing-db-credentials
+              key: POSTGRES_PASSWORD
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        resources:
+          requests:
+            cpu: 50m
+            memory: 64Mi
+          limits:
+            memory: 128Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: seat-selection
+  namespace: ticketing
+  labels:
+    app.kubernetes.io/name: seat-selection
+    app.kubernetes.io/component: api
+    app.kubernetes.io/part-of: ticketing-platform
+spec:
+  selector:
+    app.kubernetes.io/name: seat-selection
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8000

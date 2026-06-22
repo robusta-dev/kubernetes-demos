@@ -134,6 +134,19 @@ To get notifications like below, install [Robusta](https://github.com/robusta-de
 # Advanced Scenarios
 
 <details>
+<summary>Ticketing Platform — Microservice DB Misconfiguration (incident.io / Holmes demo)</summary>
+
+A small ticketing-company environment: three services (`seat-selection`, `booking`, `payment`) sharing one PostgreSQL database. The `seat-selection` service was shipped with a wrong `DB_HOST` and crash-loops, so customers can't buy tickets — an alert that looks low severity but is an urgent, revenue-impacting incident.
+
+```shell
+kubectl apply -f https://raw.githubusercontent.com/robusta-dev/kubernetes-demos/main/ticketing-incident-demo/manifest.yaml
+```
+
+Designed so an AI first responder (HolmesGPT) can find the root cause with no prior knowledge of the environment. See [`ticketing-incident-demo/`](./ticketing-incident-demo) for the full scenario and the Grafana test-alert payload.
+</details>
+
+
+<details>
 <summary>Correlate Changes and Errors</summary>
 
 Deploy a healthy pod. Then break it. 
