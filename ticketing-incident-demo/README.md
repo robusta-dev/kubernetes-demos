@@ -77,7 +77,7 @@ point**, which creates the incident in incident.io.
 ## Building the image (maintainers)
 
 ```
-./build.sh   # builds + pushes us-central1-docker.pkg.dev/genuine-flight-317411/devel/ticketing-service:v1
+./build.sh   # builds + pushes europe-docker.pkg.dev/robusta-development/kubernetes-demos/ticketing-service:v1
 ```
 
 The same image runs all three roles; the role is chosen by the `SERVICE_NAME`

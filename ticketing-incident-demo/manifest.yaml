@@ -204,7 +204,7 @@ spec:
     spec:
       containers:
       - name: booking
-        image: us-central1-docker.pkg.dev/genuine-flight-317411/devel/ticketing-service:v1
+        image: europe-docker.pkg.dev/robusta-development/kubernetes-demos/ticketing-service:v1
         ports:
         - containerPort: 8000
         env:
@@ -299,7 +299,7 @@ spec:
     spec:
       containers:
       - name: payment
-        image: us-central1-docker.pkg.dev/genuine-flight-317411/devel/ticketing-service:v1
+        image: europe-docker.pkg.dev/robusta-development/kubernetes-demos/ticketing-service:v1
         ports:
         - containerPort: 8000
         env:
@@ -397,7 +397,7 @@ spec:
     spec:
       containers:
       - name: seat-selection
-        image: us-central1-docker.pkg.dev/genuine-flight-317411/devel/ticketing-service:v1
+        image: europe-docker.pkg.dev/robusta-development/kubernetes-demos/ticketing-service:v1
         ports:
         - containerPort: 8000
         env:
