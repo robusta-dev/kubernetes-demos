@@ -1,0 +1,169 @@
+# Desired-state manifests that ArgoCD watches and syncs.
+#
+# Healthy baseline: three small nginx services. The demo introduces a "regression"
+# by changing ONE service's image tag to a non-existent one (e.g. nginx:1.99.9-nope)
+# and pushing it to the tracked branch. ArgoCD auto-syncs, the new pods get stuck in
+# ImagePullBackOff while the old ReplicaSet keeps serving, and the sync event triggers
+# a Holmes investigation.
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: storefront
+  labels:
+    app.kubernetes.io/part-of: storefront
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  namespace: storefront
+  labels:
+    app.kubernetes.io/name: frontend
+    app.kubernetes.io/component: web
+    app.kubernetes.io/part-of: storefront
+    app.kubernetes.io/managed-by: argocd
+spec:
+  replicas: 2
+  # Lowered from the 600s default so ArgoCD shows the app Degraded within ~30s of a
+  # stalled rollout (visual effect only; the demo triggers on sync, not on health).
+  progressDeadlineSeconds: 30
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: frontend
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: frontend
+        app.kubernetes.io/component: web
+        app.kubernetes.io/part-of: storefront
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.27.4
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            cpu: 10m
+            memory: 16Mi
+          limits:
+            memory: 64Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+  namespace: storefront
+  labels:
+    app.kubernetes.io/name: frontend
+    app.kubernetes.io/part-of: storefront
+spec:
+  selector:
+    app.kubernetes.io/name: frontend
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api
+  namespace: storefront
+  labels:
+    app.kubernetes.io/name: api
+    app.kubernetes.io/component: backend
+    app.kubernetes.io/part-of: storefront
+    app.kubernetes.io/managed-by: argocd
+spec:
+  replicas: 2
+  progressDeadlineSeconds: 30
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: api
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: api
+        app.kubernetes.io/component: backend
+        app.kubernetes.io/part-of: storefront
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.27.4
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            cpu: 10m
+            memory: 16Mi
+          limits:
+            memory: 64Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: api
+  namespace: storefront
+  labels:
+    app.kubernetes.io/name: api
+    app.kubernetes.io/part-of: storefront
+spec:
+  selector:
+    app.kubernetes.io/name: api
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: worker
+  namespace: storefront
+  labels:
+    app.kubernetes.io/name: worker
+    app.kubernetes.io/component: worker
+    app.kubernetes.io/part-of: storefront
+    app.kubernetes.io/managed-by: argocd
+spec:
+  replicas: 2
+  progressDeadlineSeconds: 30
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: worker
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: worker
+        app.kubernetes.io/component: worker
+        app.kubernetes.io/part-of: storefront
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.27.4
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            cpu: 10m
+            memory: 16Mi
+          limits:
+            memory: 64Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: worker
+  namespace: storefront
+  labels:
+    app.kubernetes.io/name: worker
+    app.kubernetes.io/part-of: storefront
+spec:
+  selector:
+    app.kubernetes.io/name: worker
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
