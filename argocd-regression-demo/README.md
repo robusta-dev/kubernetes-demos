@@ -36,12 +36,17 @@ self-contained instance.
    `WEBHOOK_URL`, `WEBHOOK_TOKEN` (see the top of `install-argocd.sh`).
 
 2. **Create the branch ArgoCD tracks** (the live branch where the regression commit is made —
-   kept separate from `main`):
+   kept separate from `main`). Create it from a branch that already contains
+   `argocd-regression-demo/` — i.e. `main` once this folder is merged there:
 
    ```bash
    git checkout -b argocd-regression-demo-live main
    git push -u origin argocd-regression-demo-live
    ```
+
+   > Until `argocd-regression-demo/` is merged into `main`, branch from wherever the folder
+   > currently lives instead (e.g. `origin/<feature-branch>`), or ArgoCD will report
+   > "app path does not exist".
 
 3. **Confirm the baseline is healthy:**
 
@@ -85,15 +90,17 @@ recommended revert.
 
 ## Re-running the demo
 
-Reset to green, then repeat:
+Reset to green by **reverting** the regression commit — this keeps all the demo files on the
+branch (don't `git reset --hard origin/main`, which would wipe `argocd-regression-demo/` from
+the live branch unless `main` already contains it):
 
 ```bash
 git checkout argocd-regression-demo-live
-git reset --hard origin/main        # or: git revert HEAD
-git push --force-with-lease          # (force only needed if you used reset)
+git revert --no-edit HEAD     # undo the bad-image-tag commit, keep everything else
+git push
 ```
 
-ArgoCD self-heals the app back to Healthy. Re-run by pushing the bad image tag again (vary the
+ArgoCD self-heals the app back to Healthy. Re-run by pushing another bad image tag (vary the
 service or tag to keep each take distinct).
 
 ## Cleanup / uninstall
