@@ -1,0 +1,29 @@
+# ArgoCD Application that watches the gitops/ folder and auto-syncs it.
+#
+# Replace the placeholders before applying:
+#   __REPO_URL__        e.g. https://github.com/robusta-dev/kubernetes-demos
+#   __LIVE_BRANCH__     the dedicated branch ArgoCD tracks (NOT main), where the
+#                       regression commit is made on camera, e.g. argocd-regression-demo-live
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: storefront
+  namespace: argocd-demo
+  annotations:
+    # Send a webhook to Holmes every time a new revision is successfully synced.
+    notifications.argoproj.io/subscribe.on-sync-succeeded.holmes: ""
+spec:
+  project: default
+  source:
+    repoURL: __REPO_URL__
+    path: argocd-regression-demo/gitops
+    targetRevision: __LIVE_BRANCH__
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: storefront
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
