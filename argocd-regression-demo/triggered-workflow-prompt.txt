@@ -84,29 +84,29 @@ _Triggered by ArgoCD sync of `<app>` @ `<short-revision>`_
 - Sections are exactly TL;DR → Evidence → Next Steps, then the closing question. No Root Cause / Fix / Impact / Conclusion sections.
 - Concise and direct. No padding, no drama.
 
-## Example — bad deploy · stalled rollout · Medium
+## Example — bad deploy · crash loop on missing config · High
+(Illustrative — a different scenario from the demo, to show the format.)
 ````
 🔍 *Automated RCA from HolmesGPT*
-_Triggered by ArgoCD sync of `storefront` @ `a1b2c3d`_
+_Triggered by ArgoCD sync of `payments` @ `7f3c901`_
 <https://platform.robusta.dev/holmes/triggered-workflows|View full investigation>
 
-*Triaged: Medium* 🔼
+*Triaged: High* ⏫
 
-*TL;DR:* The latest `storefront` deploy points `frontend` at an image tag that doesn't exist, so its new pods are stuck in `ImagePullBackOff` — the previous version is still serving, so there's no customer impact yet.
+*TL;DR:* The latest `payments` deploy rolled `payment-gateway` to `:1.8.0`, which crash-loops on startup because it needs a config key the manifest never set — the rollout is stalled and the old version is still serving, but it's one bad restart away from a payments outage.
 
 *Evidence*
-• Failed rollout — `frontend` new ReplicaSet is `0/2` ready, pods in `ImagePullBackOff`; `api` and `worker` are healthy
-• Still serving — the previous `frontend` ReplicaSet is up, so live traffic is unaffected for now
-• Offending commit — `a1b2c3d` changed `frontend` image `nginx:1.27.4` → `nginx:1.99.9-nope` (<https://github.com/robusta-dev/kubernetes-demos/commit/a1b2c3d|view diff>)
-• Kubelet event — from a failing `frontend` pod:
+• Crash loop — `payment-gateway` new pods are `CrashLoopBackOff`, `0/3` ready, restarting every ~20s
+• Still serving — the previous `payment-gateway` ReplicaSet is up, so payments are flowing for now
+• Offending commit — `7f3c901` bumped `payment-gateway` image `:1.7.4` → `:1.8.0` (<https://github.com/your-org/payments/commit/7f3c901|view diff>)
+• Startup failure — log from a crashing pod:
 ```
-Failed to pull image "nginx:1.99.9-nope": not found
-Back-off pulling image "nginx:1.99.9-nope"
+FATAL: missing required config STRIPE_WEBHOOK_SECRET
 ```
 
 *Next Steps*
-1. Revert `frontend` to the last good tag `nginx:1.27.4`
+1. Roll `payment-gateway` back to `:1.7.4` (or add the `STRIPE_WEBHOOK_SECRET` the new version requires)
 2. Confirm the new pods reach Ready
 
-<https://github.com/robusta-dev/kubernetes-demos/pull/319|PR #319> (revert to `nginx:1.27.4`) is ready for your review — want me to change anything before you merge?
+<https://github.com/your-org/payments/pull/204|PR #204> (roll back to `:1.7.4`) is ready for your review — want me to change anything before you merge?
 ````
