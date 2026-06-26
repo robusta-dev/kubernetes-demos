@@ -96,6 +96,20 @@ git push --force-with-lease          # (force only needed if you used reset)
 ArgoCD self-heals the app back to Healthy. Re-run by pushing the bad image tag again (vary the
 service or tag to keep each take distinct).
 
+## Cleanup / uninstall
+
+Tear down the demo and the dedicated ArgoCD instance:
+
+```bash
+./install-argocd.sh --uninstall
+```
+
+This deletes the `storefront` and `argocd-demo` namespaces. It intentionally leaves
+ArgoCD's **cluster-scoped** resources (ClusterRoles/Bindings and the `*.argoproj.io` CRDs) in
+place, because those have fixed names shared with any other ArgoCD on the cluster — removing
+them could break a different ArgoCD install. If this was the only ArgoCD, the script prints the
+extra `kubectl delete` commands to remove them too.
+
 ## How it works
 
 ```

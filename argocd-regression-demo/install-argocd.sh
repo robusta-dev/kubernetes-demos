@@ -31,6 +31,31 @@ WEBHOOK_TOKEN="${WEBHOOK_TOKEN:-}"
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 INSTALL_URL="https://raw.githubusercontent.com/argoproj/argo-cd/${ARGOCD_VERSION}/manifests/install.yaml"
 
+# --- uninstall ---------------------------------------------------------------
+# Removes the demo and the dedicated ArgoCD namespace. Leaves ArgoCD's
+# cluster-scoped resources (ClusterRoles/Bindings, CRDs) in place because they
+# share fixed names with any other ArgoCD on the cluster; removing them could
+# break a different ArgoCD install. Optional commands to remove them are printed.
+if [[ "${1:-}" == "--uninstall" || "${1:-}" == "uninstall" ]]; then
+  echo "==> Uninstalling demo + ArgoCD namespace '${NAMESPACE}'"
+  kubectl delete application storefront -n "${NAMESPACE}" --ignore-not-found
+  kubectl delete namespace storefront --ignore-not-found
+  kubectl delete namespace "${NAMESPACE}" --ignore-not-found
+  cat <<EOF
+
+==> Done. The dedicated namespaces are gone.
+
+ArgoCD's cluster-scoped resources were left in place (they may be shared with
+another ArgoCD on this cluster). If this was the ONLY ArgoCD, remove them with:
+
+  kubectl delete clusterrole argocd-application-controller argocd-server argocd-applicationset-controller --ignore-not-found
+  kubectl delete clusterrolebinding argocd-application-controller argocd-server argocd-applicationset-controller --ignore-not-found
+  kubectl delete crd applications.argoproj.io appprojects.argoproj.io applicationsets.argoproj.io --ignore-not-found
+EOF
+  exit 0
+fi
+# -----------------------------------------------------------------------------
+
 echo "==> Installing ArgoCD ${ARGOCD_VERSION} into namespace '${NAMESPACE}'"
 
 # 1. namespace (idempotent)
@@ -39,10 +64,12 @@ kubectl create namespace "${NAMESPACE}" --dry-run=client -o yaml | kubectl apply
 # 2. ArgoCD core (incl. notifications controller). The upstream manifest hardcodes
 #    'namespace: argocd' in its ClusterRoleBinding/RoleBinding subjects, so rewrite
 #    it to our namespace before applying.
+#    Use server-side apply: ArgoCD's ApplicationSet CRD exceeds the 262144-byte
+#    annotation limit that client-side `kubectl apply` would hit.
 echo "==> Applying ArgoCD manifests"
 curl -sSL "${INSTALL_URL}" \
   | sed "s|namespace: argocd$|namespace: ${NAMESPACE}|g" \
-  | kubectl apply -n "${NAMESPACE}" -f -
+  | kubectl apply --server-side --force-conflicts -n "${NAMESPACE}" -f -
 
 # 3. wait for the CRDs and the controllers to be ready
 echo "==> Waiting for ArgoCD to become ready"
