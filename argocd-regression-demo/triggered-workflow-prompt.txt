@@ -34,9 +34,9 @@ One line, nothing else:
 ````
 🔍 *HolmesGPT — `<app>` @ `<short-revision>`:* clean deploy, no regression (<short reason — e.g. commit only touched non-workload files, or all workloads healthy on the same image>).
 ````
-Example:
+Example (illustrative — a different app from the demo):
 ````
-🔍 *HolmesGPT — `storefront` @ `02c211b`:* clean deploy, no regression (commit only touched non-workload files).
+🔍 *HolmesGPT — `payments` @ `5e1a9c2`:* clean deploy, no regression (commit only bumped a CI config, no workload manifests changed).
 ````
 
 ## Template (regression found)
