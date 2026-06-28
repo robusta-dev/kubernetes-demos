@@ -1,0 +1,45 @@
+# Wires ArgoCD's notifications controller to call the Holmes Triggered Workflow
+# webhook whenever a revision is synced.
+#
+# Replace the placeholders before applying (install.sh does this for you):
+#   __WEBHOOK_URL__     the Holmes Triggered Workflow endpoint
+#   __WEBHOOK_TOKEN__   the auth token for that endpoint
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-notifications-cm
+  namespace: argocd-demo
+data:
+  service.webhook.holmes: |
+    url: __WEBHOOK_URL__
+    headers:
+    - name: Authorization
+      value: Bearer $holmes-webhook-token
+    - name: Content-Type
+      value: application/json
+
+  trigger.on-sync-succeeded: |
+    - when: app.status.operationState.phase in ['Succeeded']
+      oncePer: app.status.sync.revision
+      send: [holmes-regression]
+
+  template.holmes-regression: |
+    webhook:
+      holmes:
+        method: POST
+        body: |
+          {
+            "app": "{{.app.metadata.name}}",
+            "revision": "{{.app.status.sync.revision}}",
+            "repoURL": "{{.app.spec.source.repoURL}}",
+            "namespace": "{{.app.spec.destination.namespace}}"
+          }
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: argocd-notifications-secret
+  namespace: argocd-demo
+type: Opaque
+stringData:
+  holmes-webhook-token: __WEBHOOK_TOKEN__
