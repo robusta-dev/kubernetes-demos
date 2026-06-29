@@ -67,7 +67,7 @@ spec:
     spec:
       containers:
       - name: checkout-api
-        image: europe-docker.pkg.dev/robusta-development/kubernetes-demos/checkout-api:v2
+        image: europe-docker.pkg.dev/robusta-development/kubernetes-demos/checkout-api:v1
         ports:
         - containerPort: 8080
           name: http
