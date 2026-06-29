@@ -1,0 +1,136 @@
+# Desired state ArgoCD syncs: the checkout-api service (healthy baseline, image :v1) plus a
+# promtail sidecar that ships its JSON logs to Loki.
+#
+# The demo "deploy" is a one-line change here: bump the image tag :v1 -> :v2 and push.
+# Pods stay healthy; only the logs change.
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: promtail-config
+  namespace: checkout
+data:
+  promtail-config.yaml: |
+    server:
+      http_listen_port: 9080
+    positions:
+      filename: /tmp/positions.yaml
+    clients:
+      - url: http://loki.logging:3100/loki/api/v1/push
+        batchwait: 100ms
+        batchsize: 102400
+    scrape_configs:
+      - job_name: checkout-api
+        static_configs:
+          - targets: [localhost]
+            labels:
+              job: checkout-api
+              namespace: checkout
+              __path__: /var/log/*.log
+        pipeline_stages:
+          - json:
+              expressions:
+                timestamp: timestamp
+                level: level
+                message: message
+                service: service
+                pod: pod
+          - timestamp:
+              source: timestamp
+              format: RFC3339
+          - labels:
+              level:
+              service:
+              pod:
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: checkout-api
+  namespace: checkout
+  labels:
+    app.kubernetes.io/name: checkout-api
+    app.kubernetes.io/component: api
+    app.kubernetes.io/part-of: storefront
+    app.kubernetes.io/managed-by: argocd
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: checkout-api
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: checkout-api
+        app.kubernetes.io/component: api
+        app.kubernetes.io/part-of: storefront
+    spec:
+      containers:
+      - name: checkout-api
+        image: europe-docker.pkg.dev/robusta-development/kubernetes-demos/checkout-api:v1
+        ports:
+        - containerPort: 8080
+          name: http
+        env:
+        - name: HOSTNAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: 8080
+          initialDelaySeconds: 3
+          periodSeconds: 10
+        volumeMounts:
+        - name: logs
+          mountPath: /var/log
+        resources:
+          requests:
+            cpu: 10m
+            memory: 32Mi
+          limits:
+            memory: 128Mi
+      - name: promtail
+        image: grafana/promtail:2.9.0
+        args:
+        - -config.file=/etc/promtail/promtail-config.yaml
+        volumeMounts:
+        - name: promtail-config
+          mountPath: /etc/promtail
+        - name: logs
+          mountPath: /var/log
+        resources:
+          requests:
+            cpu: 10m
+            memory: 32Mi
+          limits:
+            memory: 64Mi
+      volumes:
+      - name: logs
+        emptyDir: {}
+      - name: promtail-config
+        configMap:
+          name: promtail-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: checkout-api
+  namespace: checkout
+  labels:
+    app.kubernetes.io/name: checkout-api
+    app.kubernetes.io/part-of: storefront
+spec:
+  selector:
+    app.kubernetes.io/name: checkout-api
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8080

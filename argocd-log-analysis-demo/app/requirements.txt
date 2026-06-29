@@ -1,0 +1,1 @@
+# checkout-api uses only the Python standard library — no dependencies.
